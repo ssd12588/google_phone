@@ -25,6 +25,7 @@ project (libphonenumber)
 set (libphonenumber_VERSION_MAJOR 8)
 set (libphonenumber_VERSION_MINOR 13)
 set (libphonenumber_VERSION_PATCH 0)
+set (CMAKE_PROJECT_VERSION ${libphonenumber_VERSION_MAJOR}.${libphonenumber_VERSION_MINOR}.${libphonenumber_VERSION_PATCH})
 
 if (32BIT)
   set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32")
@@ -493,6 +494,9 @@ endif ()
 
 if (BUILD_SHARED_LIB)
   target_link_libraries (phonenumber-shared ${LIBRARY_DEPS})
+  if (UNIX)
+    configure_file(libphonenumber.pc.in libphonenumber.pc @ONLY)
+  endif ()
 endif ()
 
 if (${BUILD_GEOCODER} STREQUAL "ON")
@@ -663,6 +667,10 @@ endif ()
 if (BUILD_SHARED_LIB)
   install (TARGETS phonenumber-shared LIBRARY DESTINATION ${LIBDIR} ARCHIVE
            DESTINATION ${LIBDIR})
+  if (UNIX)
+    install(FILES "${CMAKE_CURRENT_BINARY_DIR}/libphonenumber.pc"
+            DESTINATION "${LIBDIR}/pkgconfig")
+  endif ()
 endif ()
 
 if (${BUILD_GEOCODER} STREQUAL "ON")
@@ -682,7 +690,7 @@ if (${BUILD_GEOCODER} STREQUAL "ON")
 endif ()
 
 # Build an RPM
-set (CPACK_PACKAGE_VERSION ${libphonenumber_VERSION_MAJOR}.${libphonenumber_VERSION_MINOR}.${libphonenumber_VERSION_PATCH})
+set (CPACK_PACKAGE_VERSION ${CMAKE_PROJECT_VERSION})
 set (CPACK_GENERATOR "RPM")
 set (CPACK_PACKAGE_NAME "libphonenumber")
 set (CPACK_RPM_PACKAGE_RELEASE 1)
